@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Shivam Kumar</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .admin-container {
+            padding: 40px;
+            text-align: center;
+        }
+        .login-form, .dashboard {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .submission-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .submission-table th, .submission-table td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+        .submission-table th {
+            background-color: #ff6f61;
+            color: #fff;
+        }
+        body.dark-mode .submission-table th {
+            background-color: #e63946;
+        }
+        .submission-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        body.dark-mode .submission-table tr:nth-child(even) {
+            background-color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <h2>Admin Dashboard</h2>
+        <div id="login-form" class="login-form">
+            <input type="text" id="admin-username" placeholder="Username" required>
+            <input type="password" id="admin-password" placeholder="Password" required>
+            <button class="btn" onclick="login()">Login</button>
+        </div>
+        <div id="dashboard" class="dashboard" style="display: none;">
+            <h3>Contact Form Submissions</h3>
+            <table class="submission-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Message</th>
+                        <th>Submitted At</th>
+                    </tr>
+                </thead>
+                <tbody id="submissions-table-body"></tbody>
+            </table>
+            <button class="btn mt-3" onclick="logout()">Logout</button>
+        </div>
+    </div>
+
+    <script>
+        // Simple login (hardcoded for now)
+        const ADMIN_USERNAME = 'admin';
+        const ADMIN_PASSWORD = 'admin123';
+
+        function login() {
+            const username = document.getElementById('admin-username').value;
+            const password = document.getElementById('admin-password').value;
+
+            if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+                document.getElementById('login-form').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                loadSubmissions();
+            } else {
+                alert('Incorrect username or password');
+            }
+        }
+
+        function logout() {
+            document.getElementById('login-form').style.display = 'block';
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('admin-username').value = '';
+            document.getElementById('admin-password').value = '';
+        }
+
+        async function loadSubmissions() {
+            try {
+                const response = await fetch('http://localhost:8000/admin/submissions');
+                const submissions = await response.json();
+                const tableBody = document.getElementById('submissions-table-body');
+                tableBody.innerHTML = '';
+
+                submissions.forEach(sub => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${sub.name}</td>
+                        <td>${sub.email}</td>
+                        <td>${sub.message}</td>
+                        <td>${new Date(sub.submittedAt).toLocaleString()}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error loading submissions:', error);
+                alert('Error loading submissions. Check the console for details.');
+            }
+        }
+    </script>
+</body>
+</html>

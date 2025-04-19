@@ -1,0 +1,13 @@
+{
+    "name": "portfolio-backend",
+    "version": "1.0.0",
+    "main": "backend.js",
+    "scripts": {
+      "start": "node backend.js"
+    },
+    "dependencies": {
+      "express": "^4.18.2",
+      "portfinder": "^1.0.32",
+      "mongoose": "^7.0.0"
+    }
+  }
